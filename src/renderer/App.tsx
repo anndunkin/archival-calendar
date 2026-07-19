@@ -20,6 +20,7 @@ import { FieldMapper } from './components/FieldMapper';
 import { SettingsDialog } from './components/SettingsDialog';
 import { Modal } from './components/Modal';
 import { MONTH_NAMES, todayIso } from './calendar';
+import { searchEvents } from '../shared/search';
 
 type ViewMode = 'month' | 'year' | 'agenda' | 'recurring';
 
@@ -82,16 +83,8 @@ export function App(): JSX.Element {
     [events, selectedDate]
   );
 
-  const searchResults = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return events;
-    return events.filter((e) =>
-      [e.subject, e.description, e.location, e.category]
-        .join(' ')
-        .toLowerCase()
-        .includes(q)
-    );
-  }, [events, search]);
+  // Organizer/attendees are included in full-text search (see searchEvents).
+  const searchResults = useMemo(() => searchEvents(events, search), [events, search]);
 
   const handleImportPick = useCallback(async (format: PickedImport['format']) => {
     const result = await window.archivalCalendar.pickImport(format);

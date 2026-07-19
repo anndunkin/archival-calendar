@@ -32,6 +32,40 @@ describe('autoGuessMapping', () => {
     expect(mapping['All Day Event']).toBe('all_day');
     expect(mapping['Description']).toBe('description');
   });
+
+  it('auto-maps Outlook organizer/attendee headers to the new fields', () => {
+    const mapping = autoGuessMapping([
+      'Meeting Organizer',
+      'Required Attendees',
+      'Optional Attendees'
+    ]);
+    expect(mapping['Meeting Organizer']).toBe('organizer');
+    expect(mapping['Required Attendees']).toBe('required_attendees');
+    expect(mapping['Optional Attendees']).toBe('optional_attendees');
+  });
+
+  it('recognizes common organizer/attendee alias spellings', () => {
+    const mapping = autoGuessMapping(['Organizer', 'Attendees']);
+    expect(mapping['Organizer']).toBe('organizer');
+    expect(mapping['Attendees']).toBe('required_attendees');
+  });
+});
+
+describe('parseCsv — Outlook-style export with organizer/attendees', () => {
+  it('auto-maps and populates organizer/attendee fields from headers', () => {
+    const csv =
+      'Subject,Start Date,Meeting Organizer,Required Attendees,Optional Attendees\n' +
+      'Planning,2020-05-01,Jane Smith,Jane Smith; John Doe,Sam Lee\n';
+    const parsed = parseCsv(csv);
+    expect(parsed.events).toHaveLength(1);
+    expect(parsed.events[0]).toMatchObject({
+      subject: 'Planning',
+      start_date: '2020-05-01',
+      organizer: 'Jane Smith',
+      required_attendees: 'Jane Smith; John Doe',
+      optional_attendees: 'Sam Lee'
+    });
+  });
 });
 
 describe('applyMapping', () => {

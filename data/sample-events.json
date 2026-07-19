@@ -57,7 +57,10 @@
     "end_time": "17:00",
     "location": "Denver Office",
     "description": "Annual planning retreat.",
-    "category": "Work"
+    "category": "Work",
+    "organizer": "Jane Smith",
+    "required_attendees": "Jane Smith; John Doe",
+    "optional_attendees": "Sam Lee"
   },
   {
     "subject": "Dentist Appointment",
@@ -101,7 +104,9 @@
     "start_time": "11:00",
     "end_time": "12:00",
     "location": "Conference Room A",
-    "category": "Work"
+    "category": "Work",
+    "organizer": "John Doe",
+    "required_attendees": "Jane Smith, John Doe"
   },
   {
     "subject": "Thanksgiving Dinner",

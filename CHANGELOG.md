@@ -5,6 +5,33 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-07-19
+
+### Added
+
+- **Meeting Organizer / Required Attendees / Optional Attendees fields.** These
+  are now first-class event fields (previously users had to squeeze Outlook's
+  organizer/attendee columns into the single Description field). They are:
+  - stored as dedicated SQLite columns (existing pre-1.1.0 databases are migrated
+    in place — the new columns are added and default to empty; no data loss);
+  - offered as real targets ("Meeting Organizer", "Required Attendees", "Optional
+    Attendees") in the column-mapping dialog, and auto-detected from common CSV
+    headers (`Meeting Organizer`/`Organizer`, `Required Attendees`/`Attendees`,
+    `Optional Attendees`) and ICS `ORGANIZER`/`ATTENDEE` (REQ/OPT) properties;
+  - round-tripped on CSV export (with the same formula-injection sanitization as
+    other text fields) and on ICS export (as `ORGANIZER`/`ATTENDEE` lines);
+  - shown as labeled rows in the event detail / day panel (only when populated);
+  - included in full-text search, alongside subject/description/location/category.
+
+### Fixed
+
+- **Column-mapping dialog overflow with many columns.** Wide source files (e.g. a
+  real Outlook export with ~20 headers) previously pushed mapping rows and the
+  Cancel/Continue footer off-screen, making the import impossible to complete.
+  The modal now caps its height and scrolls its body internally while the title
+  and footer stay fixed and always visible. The fix is in the shared `Modal`
+  component, so every dialog benefits and short dialogs are unaffected.
+
 ## [1.0.1] - 2026-07-19
 
 ### Security

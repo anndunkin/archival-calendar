@@ -22,6 +22,9 @@ export function normalizeJsonRecord(raw: Record<string, unknown>): NewEvent | nu
     description: str(raw.description ?? raw.notes),
     location: str(raw.location ?? raw.place),
     category: str(raw.category ?? raw.categories),
+    organizer: str(raw.organizer ?? raw.host),
+    required_attendees: str(raw.required_attendees ?? raw.attendees),
+    optional_attendees: str(raw.optional_attendees),
     rrule: str(raw.rrule)
   };
 }

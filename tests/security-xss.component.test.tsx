@@ -47,6 +47,23 @@ describe('EventDetail renders malicious fields as inert text', () => {
     expect(container.textContent).toContain('<script>');
     expect(container.textContent).toContain('onerror=');
   });
+
+  it('escapes payloads in organizer / required / optional attendee fields', () => {
+    const { container } = render(
+      <EventDetail
+        event={ev({
+          subject: 'Meeting',
+          start_date: '2020-01-01',
+          organizer: SCRIPT_PAYLOAD,
+          required_attendees: IMG_PAYLOAD,
+          optional_attendees: SCRIPT_PAYLOAD
+        })}
+      />
+    );
+    assertNoInjectedNodes(container);
+    expect(container.textContent).toContain('<script>');
+    expect(container.textContent).toContain('onerror=');
+  });
 });
 
 describe('AgendaView renders malicious fields as inert text', () => {

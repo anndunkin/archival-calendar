@@ -45,6 +45,22 @@ function unescapeText(value: string): string {
     .replace(/\\\\/g, '\\');
 }
 
+/**
+ * Human-readable label for an ORGANIZER/ATTENDEE line. Prefers the CN=
+ * parameter (a display name); otherwise strips a leading mailto: from the
+ * value so we store an address rather than a URI.
+ */
+function calendarUserLabel(l: RawLine): string {
+  if (l.params.CN) return l.params.CN.replace(/^"|"$/g, '').trim();
+  return l.value.replace(/^mailto:/i, '').trim();
+}
+
+/** Append a value to a semicolon-separated accumulator string. */
+function appendList(existing: string | undefined, value: string): string {
+  if (!value) return existing ?? '';
+  return existing ? `${existing}; ${value}` : value;
+}
+
 /** True when a DTSTART/DTEND is a date-only value (all-day event). */
 function isDateOnly(l: RawLine): boolean {
   return l.params.VALUE === 'DATE' || /^\d{8}$/.test(l.value.trim());
@@ -105,6 +121,18 @@ export function parseIcs(content: string): ParsedImport {
       case 'CATEGORIES':
         current.category = unescapeText(l.value).trim();
         break;
+      case 'ORGANIZER':
+        current.organizer = calendarUserLabel(l);
+        break;
+      case 'ATTENDEE': {
+        const label = calendarUserLabel(l);
+        if ((l.params.ROLE || '').toUpperCase() === 'OPT-PARTICIPANT') {
+          current.optional_attendees = appendList(current.optional_attendees, label);
+        } else {
+          current.required_attendees = appendList(current.required_attendees, label);
+        }
+        break;
+      }
       case 'RRULE':
         current.rrule = l.value.trim();
         break;

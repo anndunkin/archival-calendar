@@ -9,6 +9,9 @@ export interface CalendarEvent {
   description: string;
   location: string;
   category: string;
+  organizer: string; // meeting organizer (raw string)
+  required_attendees: string; // required attendees, raw list as it appears in source
+  optional_attendees: string; // optional attendees, raw list as it appears in source
   rrule: string; // raw RRULE from ICS (e.g. FREQ=YEARLY) or ''
   source_file: string; // filename this event was imported from
   created_at: string;
@@ -79,6 +82,9 @@ export const EVENT_FIELDS: (keyof CalendarEvent)[] = [
   'description',
   'location',
   'category',
+  'organizer',
+  'required_attendees',
+  'optional_attendees',
   'rrule',
   'source_file'
 ];
@@ -93,7 +99,10 @@ export const MAPPABLE_FIELDS: { key: keyof CalendarEvent; label: string }[] = [
   { key: 'all_day', label: 'All Day Event' },
   { key: 'location', label: 'Location' },
   { key: 'description', label: 'Description' },
-  { key: 'category', label: 'Category' }
+  { key: 'category', label: 'Category' },
+  { key: 'organizer', label: 'Meeting Organizer' },
+  { key: 'required_attendees', label: 'Required Attendees' },
+  { key: 'optional_attendees', label: 'Optional Attendees' }
 ];
 
 export function emptyEvent(): CalendarEvent {
@@ -107,6 +116,9 @@ export function emptyEvent(): CalendarEvent {
     description: '',
     location: '',
     category: '',
+    organizer: '',
+    required_attendees: '',
+    optional_attendees: '',
     rrule: '',
     source_file: '',
     created_at: new Date().toISOString()

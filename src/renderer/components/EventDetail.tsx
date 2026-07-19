@@ -36,6 +36,24 @@ export function EventDetail({ event }: EventDetailProps): JSX.Element {
           <span style={{ whiteSpace: 'pre-wrap' }}>{event.description}</span>
         </div>
       )}
+      {event.organizer && (
+        <div className="event-detail-row">
+          <span className="label">Organizer</span>
+          <span>{event.organizer}</span>
+        </div>
+      )}
+      {event.required_attendees && (
+        <div className="event-detail-row">
+          <span className="label">Required</span>
+          <span style={{ whiteSpace: 'pre-wrap' }}>{event.required_attendees}</span>
+        </div>
+      )}
+      {event.optional_attendees && (
+        <div className="event-detail-row">
+          <span className="label">Optional</span>
+          <span style={{ whiteSpace: 'pre-wrap' }}>{event.optional_attendees}</span>
+        </div>
+      )}
       {event.rrule && (
         <div className="event-detail-row">
           <span className="label">Recurrence</span>

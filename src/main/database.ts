@@ -20,6 +20,9 @@ CREATE TABLE IF NOT EXISTS events (
   description TEXT DEFAULT '',
   location TEXT DEFAULT '',
   category TEXT DEFAULT '',
+  organizer TEXT DEFAULT '',
+  required_attendees TEXT DEFAULT '',
+  optional_attendees TEXT DEFAULT '',
   rrule TEXT DEFAULT '',
   source_file TEXT DEFAULT '',
   created_at TEXT DEFAULT ''
@@ -39,7 +42,20 @@ CREATE INDEX IF NOT EXISTS idx_events_subject ON events(subject);
 
 const COLUMNS: (keyof CalendarEvent)[] = [
   'subject', 'start_date', 'start_time', 'end_date', 'end_time', 'all_day',
-  'description', 'location', 'category', 'rrule', 'source_file', 'created_at'
+  'description', 'location', 'category', 'organizer', 'required_attendees',
+  'optional_attendees', 'rrule', 'source_file', 'created_at'
+];
+
+/**
+ * Columns added after v1.0.1. A pre-existing user database created by an older
+ * release will not have these, so we ALTER the table to add any that are
+ * missing (SQLite defaults them to '' via the column definition). New/fresh
+ * databases already get them from SCHEMA above, so this is a no-op there.
+ */
+const ADDED_COLUMNS: { name: string; ddl: string }[] = [
+  { name: 'organizer', ddl: "organizer TEXT DEFAULT ''" },
+  { name: 'required_attendees', ddl: "required_attendees TEXT DEFAULT ''" },
+  { name: 'optional_attendees', ddl: "optional_attendees TEXT DEFAULT ''" }
 ];
 
 export class EventDatabase {
@@ -49,6 +65,19 @@ export class EventDatabase {
     this.db = new Database(filePath);
     this.db.pragma('journal_mode = WAL');
     this.db.exec(SCHEMA);
+    this.migrate();
+  }
+
+  /** Lightweight in-place migration: add post-v1.0.1 columns if absent. */
+  private migrate(): void {
+    const existing = new Set(
+      (this.db.prepare('PRAGMA table_info(events)').all() as { name: string }[]).map((c) => c.name)
+    );
+    for (const col of ADDED_COLUMNS) {
+      if (!existing.has(col.name)) {
+        this.db.exec(`ALTER TABLE events ADD COLUMN ${col.ddl}`);
+      }
+    }
   }
 
   close(): void {

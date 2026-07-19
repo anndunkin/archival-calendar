@@ -32,6 +32,14 @@ function icsDate(isoDate: string): string {
   return isoDate.replace(/-/g, '');
 }
 
+/** Split a raw attendee list (semicolon or comma separated) into names. */
+function splitAttendees(raw: string): string[] {
+  return (raw ?? '')
+    .split(/[;,]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 // ---------- full-archive export ----------
 
 export function exportEventsCsv(events: CalendarEvent[]): string {
@@ -45,6 +53,9 @@ export function exportEventsCsv(events: CalendarEvent[]): string {
     Location: sanitizeCsvField(e.location),
     Description: sanitizeCsvField(e.description),
     Category: sanitizeCsvField(e.category),
+    'Meeting Organizer': sanitizeCsvField(e.organizer),
+    'Required Attendees': sanitizeCsvField(e.required_attendees),
+    'Optional Attendees': sanitizeCsvField(e.optional_attendees),
     Source: sanitizeCsvField(e.source_file)
   }));
   return Papa.unparse(rows);
@@ -72,6 +83,13 @@ export function exportEventsIcs(events: CalendarEvent[]): string {
     if (e.location) lines.push(`LOCATION:${icsEscape(e.location)}`);
     if (e.description) lines.push(`DESCRIPTION:${icsEscape(e.description)}`);
     if (e.category) lines.push(`CATEGORIES:${icsEscape(e.category)}`);
+    if (e.organizer) lines.push(`ORGANIZER;CN=${icsEscape(e.organizer)}:MAILTO:`);
+    for (const a of splitAttendees(e.required_attendees)) {
+      lines.push(`ATTENDEE;ROLE=REQ-PARTICIPANT;CN=${icsEscape(a)}:MAILTO:`);
+    }
+    for (const a of splitAttendees(e.optional_attendees)) {
+      lines.push(`ATTENDEE;ROLE=OPT-PARTICIPANT;CN=${icsEscape(a)}:MAILTO:`);
+    }
     if (e.rrule) lines.push(`RRULE:${e.rrule}`);
     lines.push('END:VEVENT');
   }

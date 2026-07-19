@@ -70,6 +70,33 @@ describe('exportEventsCsv formula-injection hardening', () => {
   });
 });
 
+describe('exportEventsCsv organizer/attendee formula-injection hardening', () => {
+  it('neutralizes a formula payload in organizer and attendee fields', () => {
+    const csv = exportEventsCsv([
+      ev({
+        subject: 'Sync',
+        start_date: '2020-01-01',
+        organizer: '=cmd|\'/c calc\'!A1',
+        required_attendees: '@SUM(1+1); John Doe',
+        optional_attendees: '+HYPERLINK("http://evil")'
+      })
+    ]);
+    expect(csv).toContain("'=cmd");
+    expect(csv).toContain("'@SUM(1+1)");
+    expect(csv).toContain("'+HYPERLINK");
+    // No exported data cell may begin with a formula trigger.
+    const lines = csv.split(/\r?\n/).filter(Boolean);
+    for (const line of lines.slice(1)) {
+      for (const rawCell of line.split(',')) {
+        const cell = rawCell.replace(/^"|"$/g, '');
+        if (cell.length > 0) {
+          expect(/^[=+\-@\t\r]/.test(cell)).toBe(false);
+        }
+      }
+    }
+  });
+});
+
 describe('exportRecurringCsv formula-injection hardening', () => {
   it('neutralizes a formula payload in a recurring item subject/category', () => {
     const item: RecurringItem = {

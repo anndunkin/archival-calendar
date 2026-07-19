@@ -47,6 +47,35 @@ describe('parseIcs', () => {
     expect(allDay.start_time).toBeUndefined();
   });
 
+  it('parses ORGANIZER and ATTENDEE (required + optional) into the new fields', () => {
+    const ics = [
+      'BEGIN:VEVENT',
+      'SUMMARY:Sync',
+      'DTSTART:20200305T090000Z',
+      'ORGANIZER;CN=Jane Smith:mailto:jane@example.com',
+      'ATTENDEE;ROLE=REQ-PARTICIPANT;CN=John Doe:mailto:john@example.com',
+      'ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Jane Smith:mailto:jane@example.com',
+      'ATTENDEE;ROLE=OPT-PARTICIPANT;CN=Sam Lee:mailto:sam@example.com',
+      'END:VEVENT'
+    ].join('\r\n');
+    const { events } = parseIcs(ics);
+    expect(events[0].organizer).toBe('Jane Smith');
+    expect(events[0].required_attendees).toBe('John Doe; Jane Smith');
+    expect(events[0].optional_attendees).toBe('Sam Lee');
+  });
+
+  it('falls back to the mailto address when no CN is present', () => {
+    const ics = [
+      'BEGIN:VEVENT',
+      'SUMMARY:Sync',
+      'DTSTART:20200305T090000Z',
+      'ATTENDEE:mailto:nocn@example.com',
+      'END:VEVENT'
+    ].join('\r\n');
+    const { events } = parseIcs(ics);
+    expect(events[0].required_attendees).toBe('nocn@example.com');
+  });
+
   it('unfolds folded continuation lines', () => {
     const folded = [
       'BEGIN:VEVENT',

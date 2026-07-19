@@ -63,5 +63,8 @@ export function normalizeRawEvent(
   if (raw.location) event.location = raw.location.trim();
   if (raw.description) event.description = raw.description.trim();
   if (raw.category) event.category = raw.category.trim();
+  if (raw.organizer) event.organizer = raw.organizer.trim();
+  if (raw.required_attendees) event.required_attendees = raw.required_attendees.trim();
+  if (raw.optional_attendees) event.optional_attendees = raw.optional_attendees.trim();
   return event;
 }

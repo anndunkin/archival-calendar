@@ -1,6 +1,6 @@
 {
   "name": "archival-calendar",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Archival Calendar desktop application — Electron + React + SQLite read-only viewer for historic calendar data with CSV/ICS import and annual-recurring-event detection",
   "author": "anndunkin",
   "license": "MIT",

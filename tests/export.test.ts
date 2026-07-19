@@ -33,6 +33,26 @@ describe('exportEventsCsv', () => {
   });
 });
 
+describe('exportEventsCsv organizer/attendee round-trip', () => {
+  it('includes organizer and attendee columns and values', () => {
+    const csv = exportEventsCsv([
+      ev({
+        subject: 'Sync',
+        start_date: '2020-01-01',
+        organizer: 'Jane Smith',
+        required_attendees: 'Jane Smith; John Doe',
+        optional_attendees: 'Sam Lee'
+      })
+    ]);
+    expect(csv).toContain('Meeting Organizer');
+    expect(csv).toContain('Required Attendees');
+    expect(csv).toContain('Optional Attendees');
+    expect(csv).toContain('Jane Smith');
+    expect(csv).toContain('John Doe');
+    expect(csv).toContain('Sam Lee');
+  });
+});
+
 describe('exportEventsIcs', () => {
   it('wraps events in a VCALENDAR with VEVENTs', () => {
     const ics = exportEventsIcs([
@@ -48,6 +68,23 @@ describe('exportEventsIcs', () => {
   it('emits VALUE=DATE for all-day events', () => {
     const ics = exportEventsIcs([ev({ subject: 'Holiday', start_date: '2020-12-25', all_day: 1 })]);
     expect(ics).toContain('DTSTART;VALUE=DATE:20201225');
+  });
+
+  it('emits ORGANIZER and ATTENDEE lines (required + optional) for a meeting', () => {
+    const ics = exportEventsIcs([
+      ev({
+        subject: 'Sync',
+        start_date: '2020-03-05',
+        start_time: '09:00',
+        organizer: 'Jane Smith',
+        required_attendees: 'Jane Smith; John Doe',
+        optional_attendees: 'Sam Lee'
+      })
+    ]);
+    expect(ics).toContain('ORGANIZER;CN=Jane Smith');
+    expect(ics).toContain('ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Jane Smith');
+    expect(ics).toContain('ATTENDEE;ROLE=REQ-PARTICIPANT;CN=John Doe');
+    expect(ics).toContain('ATTENDEE;ROLE=OPT-PARTICIPANT;CN=Sam Lee');
   });
 });
 

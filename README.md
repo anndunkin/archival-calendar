@@ -12,9 +12,12 @@ Built with Electron, React, TypeScript and SQLite (`better-sqlite3`).
 ## Features
 
 - **Month, Year, and Agenda views** for browsing decades of calendar history.
-- **Full-text search** across subject, description, location and category.
+- **Full-text search** across subject, description, location, category, meeting
+  organizer and attendees.
 - **CSV import** with an automatic column mapper for common Google and Outlook
-  exports, plus a manual field-mapping dialog for anything else.
+  exports, plus a manual field-mapping dialog for anything else. The mapping
+  dialog scrolls internally, so wide exports (Outlook's ~20 columns) map cleanly
+  with the Cancel/Continue buttons always reachable.
 - **ICS import** via a dependency-free iCalendar parser (handles folded lines,
   all-day events, `RRULE`, categories).
 - **Duplicate handling** on import (skip duplicates, or keep both) matched on
@@ -74,11 +77,13 @@ first-run users have data to explore; they are never re-seeded after that.
 
 - **CSV** — Google Calendar and Outlook exports are auto-detected; common headers
   (`Subject`/`Title`/`Summary`, `Start Date`, `Start Time`, `All Day Event`,
-  `Location`, `Description`, `Category`…) are mapped automatically. Any other CSV
-  can be mapped manually with the column-mapping dialog. A range of date formats
-  is understood (ISO, US `M/D/Y`, textual months).
+  `Location`, `Description`, `Category`, `Meeting Organizer`, `Required Attendees`,
+  `Optional Attendees`…) are mapped automatically. Any other CSV can be mapped
+  manually with the column-mapping dialog. A range of date formats is understood
+  (ISO, US `M/D/Y`, textual months).
 - **ICS / iCalendar** — standard `.ics` files, including all-day events, folded
-  lines, categories and recurrence rules.
+  lines, categories, recurrence rules, and `ORGANIZER`/`ATTENDEE` (required vs.
+  optional) properties.
 - **Outlook PST — _not supported in v1_ (known limitation).** The import dialog
   lists "Outlook PST (coming soon)" as a disabled option. For now, export your
   Outlook calendar to CSV or ICS instead:

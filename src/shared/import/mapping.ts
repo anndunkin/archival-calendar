@@ -39,7 +39,19 @@ const ALIASES: Record<string, keyof CalendarEvent> = {
   categories: 'category',
   type: 'category',
   tag: 'category',
-  tags: 'category'
+  tags: 'category',
+  'meeting organizer': 'organizer',
+  organizer: 'organizer',
+  organiser: 'organizer',
+  'meeting organiser': 'organizer',
+  host: 'organizer',
+  'required attendees': 'required_attendees',
+  'required attendee': 'required_attendees',
+  attendees: 'required_attendees',
+  attendee: 'required_attendees',
+  participants: 'required_attendees',
+  'optional attendees': 'optional_attendees',
+  'optional attendee': 'optional_attendees'
 };
 
 export function autoGuessMapping(headers: string[]): FieldMapping {

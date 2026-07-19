@@ -9,11 +9,16 @@ interface ModalProps {
 
 export function Modal({ title, onClose, children, footer }: ModalProps): JSX.Element {
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" role="dialog" aria-label={title} onClick={(e) => e.stopPropagation()}>
-        <h3>{title}</h3>
-        {children}
-        {footer && <div className="modal-actions">{footer}</div>}
+        <div className="modal-header">
+          <h2>{title}</h2>
+          <button className="modal-close" aria-label="Close" onClick={onClose}>
+            ×
+          </button>
+        </div>
+        <div className="modal-body">{children}</div>
+        {footer && <div className="modal-footer">{footer}</div>}
       </div>
     </div>
   );
