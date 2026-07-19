@@ -9,3 +9,6 @@ release/
 npm-debug.log*
 coverage/
 *.log
+
+# Local-only real-world test fixtures — contain real personal data, never commit
+tests/fixtures/real-world/

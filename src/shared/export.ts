@@ -5,6 +5,21 @@ function pad(n: number): string {
   return String(n).padStart(2, '0');
 }
 
+/**
+ * Neutralize CSV/formula injection. Spreadsheet apps (Excel, Sheets, LibreOffice)
+ * treat a cell whose text begins with =, +, -, @, or a leading tab/CR as a
+ * formula, so a malicious imported event field like `=cmd|'/c calc'!A1` could
+ * execute on export+open. Prefixing such values with a single quote forces the
+ * cell to be interpreted as literal text without altering the visible content.
+ */
+export function sanitizeCsvField(value: unknown): string {
+  const str = value == null ? '' : String(value);
+  if (str.length > 0 && /^[=+\-@\t\r]/.test(str)) {
+    return `'${str}`;
+  }
+  return str;
+}
+
 function icsEscape(value: string): string {
   return (value ?? '')
     .replace(/\\/g, '\\\\')
@@ -21,16 +36,16 @@ function icsDate(isoDate: string): string {
 
 export function exportEventsCsv(events: CalendarEvent[]): string {
   const rows = events.map((e) => ({
-    Subject: e.subject,
-    'Start Date': e.start_date,
-    'Start Time': e.start_time,
-    'End Date': e.end_date,
-    'End Time': e.end_time,
+    Subject: sanitizeCsvField(e.subject),
+    'Start Date': sanitizeCsvField(e.start_date),
+    'Start Time': sanitizeCsvField(e.start_time),
+    'End Date': sanitizeCsvField(e.end_date),
+    'End Time': sanitizeCsvField(e.end_time),
     'All Day Event': e.all_day ? 'True' : 'False',
-    Location: e.location,
-    Description: e.description,
-    Category: e.category,
-    Source: e.source_file
+    Location: sanitizeCsvField(e.location),
+    Description: sanitizeCsvField(e.description),
+    Category: sanitizeCsvField(e.category),
+    Source: sanitizeCsvField(e.source_file)
   }));
   return Papa.unparse(rows);
 }
@@ -68,13 +83,13 @@ export function exportEventsIcs(events: CalendarEvent[]): string {
 
 export function exportRecurringCsv(items: RecurringItem[]): string {
   const rows = items.map((i) => ({
-    Subject: i.subject,
+    Subject: sanitizeCsvField(i.subject),
     Month: pad(i.month),
     Day: pad(i.day),
-    Category: i.category,
+    Category: sanitizeCsvField(i.category),
     Years: i.years.join(' '),
     Occurrences: i.count,
-    Source: i.source
+    Source: sanitizeCsvField(i.source)
   }));
   return Papa.unparse(rows);
 }

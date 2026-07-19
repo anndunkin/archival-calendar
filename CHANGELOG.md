@@ -5,6 +5,39 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-07-19
+
+### Security
+
+- **CSV / formula-injection hardening:** exported CSV fields (subject,
+  description, location, category, source) whose text begins with `=`, `+`, `-`,
+  `@`, or a leading tab/carriage-return are now prefixed with a single quote so
+  opening an exported archive in Excel/Sheets/LibreOffice can no longer execute
+  attacker-supplied formulas (e.g. `=cmd|'/c calc'!A1`). Applies to both the
+  full-archive and recurring-items CSV exporters.
+- **Electron sandbox enabled:** the main `BrowserWindow` now runs with
+  `sandbox: true` (in addition to the existing `contextIsolation: true` /
+  `nodeIntegration: false`), tightening the renderer's security boundary.
+- **Security test suite added** (does not change runtime behavior beyond the
+  fixes above):
+  - CSV/formula-injection tests asserting leading formula triggers are
+    neutralized on export.
+  - XSS / HTML-injection component tests asserting malicious event fields render
+    as literal text (React escaping; no `dangerouslySetInnerHTML` anywhere).
+  - SQL-injection tests confirming all `better-sqlite3` queries are
+    parameterized — classic payloads (`'; DROP TABLE events; --`) are stored and
+    compared as inert data and never drop or corrupt the table.
+  - Malformed / adversarial ICS tests (unterminated blocks, huge property
+    values, absurd `RRULE` counts, control characters, deeply repeated blocks)
+    confirming the parser fails gracefully and never hangs or crashes.
+  - Path-traversal guards asserting main-process file paths derive only from
+    native dialogs / `path.join`, never from untrusted string concatenation.
+  - An Electron-hardening regression guard locking in the `webPreferences`
+    flags above.
+  - A local-only (git-ignored) regression test validating the CSV importer
+    against a large, real-world Outlook export (BOM handling, multiline quoted
+    fields, missing optional columns).
+
 ## [1.0.0] - 2026-07-19
 
 Initial release of Archival Calendar — a read-only Windows desktop viewer for
