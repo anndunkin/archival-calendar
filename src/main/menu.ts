@@ -38,10 +38,12 @@ export function buildMenu(win: BrowserWindow): Menu {
     {
       label: 'View',
       submenu: [
-        { label: 'Month', accelerator: 'CmdOrCtrl+1', click: () => send(win, 'view-month') },
-        { label: 'Year', accelerator: 'CmdOrCtrl+2', click: () => send(win, 'view-year') },
-        { label: 'Agenda / List', accelerator: 'CmdOrCtrl+3', click: () => send(win, 'view-agenda') },
-        { label: 'Annual Recurring Events', accelerator: 'CmdOrCtrl+4', click: () => send(win, 'view-recurring') },
+        { label: 'Day', accelerator: 'CmdOrCtrl+1', click: () => send(win, 'view-day') },
+        { label: 'Week', accelerator: 'CmdOrCtrl+2', click: () => send(win, 'view-week') },
+        { label: 'Month', accelerator: 'CmdOrCtrl+3', click: () => send(win, 'view-month') },
+        { label: 'Year', accelerator: 'CmdOrCtrl+4', click: () => send(win, 'view-year') },
+        { label: 'Agenda / List', accelerator: 'CmdOrCtrl+5', click: () => send(win, 'view-agenda') },
+        { label: 'Annual Recurring Events', accelerator: 'CmdOrCtrl+6', click: () => send(win, 'view-recurring') },
         { type: 'separator' },
         { label: 'Jump to Today', accelerator: 'CmdOrCtrl+T', click: () => send(win, 'jump-today') },
         { label: 'Find / Search', accelerator: 'CmdOrCtrl+F', click: () => send(win, 'find') },

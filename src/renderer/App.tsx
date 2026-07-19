@@ -13,16 +13,25 @@ import { SearchBar } from './components/SearchBar';
 import { MonthView } from './components/MonthView';
 import { YearView } from './components/YearView';
 import { AgendaView } from './components/AgendaView';
+import { DayView } from './components/DayView';
+import { WeekView } from './components/WeekView';
 import { DayPanel } from './components/DayPanel';
 import { RecurringEvents } from './components/RecurringEvents';
 import { ImportDialog } from './components/ImportDialog';
 import { FieldMapper } from './components/FieldMapper';
 import { SettingsDialog } from './components/SettingsDialog';
 import { Modal } from './components/Modal';
-import { MONTH_NAMES, todayIso } from './calendar';
+import {
+  MONTH_NAMES,
+  todayIso,
+  addDays,
+  weekStart,
+  formatFullDate,
+  formatWeekRange
+} from './calendar';
 import { searchEvents } from '../shared/search';
 
-type ViewMode = 'month' | 'year' | 'agenda' | 'recurring';
+type ViewMode = 'month' | 'year' | 'agenda' | 'recurring' | 'day' | 'week';
 
 const YEARS_BACK = 60;
 
@@ -126,13 +135,32 @@ export function App(): JSX.Element {
     setYear(now.getFullYear());
     setMonth(now.getMonth() + 1);
     setSelectedDate(t);
-    setView('month');
+    // In Day/Week view, Today just re-anchors to the current date; other views
+    // fall back to Month as before.
+    setView((v) => (v === 'day' || v === 'week' ? v : 'month'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Switch view; Day/Week need an anchor date, so default to today if none set.
+  const switchView = useCallback(
+    (v: ViewMode) => {
+      if ((v === 'day' || v === 'week') && !selectedDate) {
+        setSelectedDate(todayIso());
+      }
+      setView(v);
+    },
+    [selectedDate]
+  );
 
   const handleMenu = useCallback(
     async (event: MenuEvent) => {
       switch (event) {
+        case 'view-day':
+          switchView('day');
+          break;
+        case 'view-week':
+          switchView('week');
+          break;
         case 'view-month':
           setView('month');
           break;
@@ -194,7 +222,7 @@ export function App(): JSX.Element {
           break;
       }
     },
-    [handleImportPick, handleExportAll, jumpToToday, refresh]
+    [handleImportPick, handleExportAll, jumpToToday, switchView, refresh]
   );
 
   useEffect(() => {
@@ -214,7 +242,11 @@ export function App(): JSX.Element {
   }, [refresh]);
 
   const prevPeriod = () => {
-    if (view === 'year') {
+    if (view === 'day') {
+      setSelectedDate((d) => addDays(d ?? todayIso(), -1));
+    } else if (view === 'week') {
+      setSelectedDate((d) => addDays(d ?? todayIso(), -7));
+    } else if (view === 'year') {
       setYear((y) => y - 1);
     } else if (month === 1) {
       setMonth(12);
@@ -224,7 +256,11 @@ export function App(): JSX.Element {
     }
   };
   const nextPeriod = () => {
-    if (view === 'year') {
+    if (view === 'day') {
+      setSelectedDate((d) => addDays(d ?? todayIso(), 1));
+    } else if (view === 'week') {
+      setSelectedDate((d) => addDays(d ?? todayIso(), 7));
+    } else if (view === 'year') {
       setYear((y) => y + 1);
     } else if (month === 12) {
       setMonth(1);
@@ -261,11 +297,11 @@ export function App(): JSX.Element {
 
       <div className="toolbar">
         <div className="view-switcher">
-          {(['month', 'year', 'agenda', 'recurring'] as ViewMode[]).map((v) => (
+          {(['day', 'week', 'month', 'year', 'agenda', 'recurring'] as ViewMode[]).map((v) => (
             <button
               key={v}
               className={view === v ? 'active' : ''}
-              onClick={() => setView(v)}
+              onClick={() => switchView(v)}
             >
               {v === 'recurring' ? 'Annual Recurring' : v.charAt(0).toUpperCase() + v.slice(1)}
             </button>
@@ -290,13 +326,15 @@ export function App(): JSX.Element {
                 ))}
               </select>
             )}
-            <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
-              {yearOptions.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
+            {(view === 'month' || view === 'year') && (
+              <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+                {yearOptions.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         )}
 
@@ -319,6 +357,33 @@ export function App(): JSX.Element {
       </div>
 
       <div className="main">
+        {view === 'day' && (
+          <div className="calendar-area">
+            <h2 className="period-title">{formatFullDate(selectedDate ?? todayIso())}</h2>
+            <DayView date={selectedDate ?? todayIso()} events={events} />
+          </div>
+        )}
+
+        {view === 'week' && (
+          <>
+            <div className="calendar-area">
+              <h2 className="period-title">
+                {formatWeekRange(
+                  weekStart(selectedDate ?? todayIso()),
+                  addDays(weekStart(selectedDate ?? todayIso()), 6)
+                )}
+              </h2>
+              <WeekView
+                anchor={selectedDate ?? todayIso()}
+                events={events}
+                selectedDate={selectedDate}
+                onSelectDate={selectDate}
+              />
+            </div>
+            <DayPanel date={selectedDate} events={dayEvents} />
+          </>
+        )}
+
         {view === 'month' && (
           <>
             <div className="calendar-area">

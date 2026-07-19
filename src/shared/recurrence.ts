@@ -80,6 +80,13 @@ export interface DetectOptions {
  *    immediate high-confidence match, OR
  *  - the same month + day appears with a matching subject across 2+ distinct
  *    years (subject matched exactly, or fuzzily when `fuzzy` is enabled).
+ *
+ * A second pass then rejects false positives: a subject that shows up across
+ * multiple *different* month/day dates anywhere in the archive is a
+ * regularly-scheduled meeting, not a once-a-year date-based occasion, so it is
+ * excluded entirely even if one of its date pairings happened to qualify by
+ * coincidence. The distinct-date count is computed only from non-RRULE-yearly
+ * instances, so an intentionally yearly RRULE item is still trusted.
  */
 export function detectRecurringItems(
   events: CalendarEvent[],
@@ -119,12 +126,51 @@ export function detectRecurringItems(
     if (/freq=yearly/i.test(event.rrule || '')) target.hasRrule = true;
   }
 
+  // Second pass: for every normalized subject, collect the set of distinct
+  // month|day combinations it appears on across the WHOLE archive, counting
+  // only non-RRULE-yearly instances. When fuzzy matching is on, near-identical
+  // subjects are merged under one canonical key so variants can't dodge the
+  // filter. A subject confined to a single date passes; one scattered across 2+
+  // dates is a recurring meeting and every cluster for it is dropped.
+  const canonicalReps: string[] = [];
+  const resolveCanonical = (norm: string): string => {
+    if (!fuzzy) return norm;
+    for (const rep of canonicalReps) {
+      if (similarity(rep, norm) >= FUZZY_THRESHOLD) return rep;
+    }
+    canonicalReps.push(norm);
+    return norm;
+  };
+
+  const nonRruleDatesBySubject = new Map<string, Set<string>>();
+  for (const event of events) {
+    const parts = partsOf(event.start_date);
+    if (!parts) continue;
+    const norm = normalizeSubject(event.subject);
+    if (!norm) continue;
+    const canonical = resolveCanonical(norm);
+    let dates = nonRruleDatesBySubject.get(canonical);
+    if (!dates) {
+      dates = new Set<string>();
+      nonRruleDatesBySubject.set(canonical, dates);
+    }
+    if (!/freq=yearly/i.test(event.rrule || '')) {
+      dates.add(`${parts.month}|${parts.day}`);
+    }
+  }
+
   const items: RecurringItem[] = [];
   for (const clusters of buckets.values()) {
     for (const c of clusters) {
       const distinctYears = Array.from(c.years).sort((a, b) => a - b);
       const qualifies = c.hasRrule || distinctYears.length >= 2;
       if (!qualifies) continue;
+
+      // Drop subjects that live on 2+ distinct dates (recurring meetings).
+      const canonical = resolveCanonical(c.rep);
+      const distinctDates = nonRruleDatesBySubject.get(canonical)?.size ?? 0;
+      if (distinctDates >= 2) continue;
+
       items.push({
         key: `${c.rep}|${c.month}|${c.day}`,
         subject: c.displaySubject,

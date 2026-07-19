@@ -33,6 +33,8 @@ export interface SeedProgress {
 }
 
 export type MenuEvent =
+  | 'view-day'
+  | 'view-week'
   | 'view-month'
   | 'view-year'
   | 'view-agenda'

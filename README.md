@@ -11,7 +11,9 @@ Built with Electron, React, TypeScript and SQLite (`better-sqlite3`).
 
 ## Features
 
-- **Month, Year, and Agenda views** for browsing decades of calendar history.
+- **Day, Week, Month, Year, and Agenda views** for browsing decades of calendar
+  history. Day and Week views step with the same `‹` / `›` arrows — by one day
+  and by seven days respectively — and `Today` re-anchors to the current date.
 - **Full-text search** across subject, description, location, category, meeting
   organizer and attendees.
 - **CSV import** with an automatic column mapper for common Google and Outlook
@@ -24,7 +26,12 @@ Built with Electron, React, TypeScript and SQLite (`better-sqlite3`).
   subject + start date/time.
 - **Annual Recurring Events detection** — groups events landing on the same
   month & day across two or more years, or carrying `RRULE:FREQ=YEARLY`, with an
-  optional fuzzy-subject matching mode.
+  optional fuzzy-subject matching mode. Recurring *meetings* are filtered out: if
+  the same subject appears on two or more different month/day dates anywhere in
+  the archive (a signal it's a regularly-scheduled meeting, not a once-a-year
+  occasion), it is excluded even when two of its occurrences coincidentally share
+  a date. The distinct-date count ignores explicit `RRULE:FREQ=YEARLY`
+  instances, so intentionally-yearly items are still trusted.
 - **Export** the whole archive (CSV or ICS) or just the detected recurring items
   (CSV, or ICS as yearly-recurring events) for import into a reminder tool.
 - **Portable SQLite database** you can open, create, or "Save As" anywhere.
@@ -47,10 +54,12 @@ Use the toolbar to switch views and navigate periods, or the keyboard shortcuts:
 
 | Shortcut  | Action                     |
 | --------- | -------------------------- |
-| `Ctrl+1`  | Month view                 |
-| `Ctrl+2`  | Year view                  |
-| `Ctrl+3`  | Agenda view                |
-| `Ctrl+4`  | Annual Recurring view      |
+| `Ctrl+1`  | Day view                   |
+| `Ctrl+2`  | Week view                  |
+| `Ctrl+3`  | Month view                 |
+| `Ctrl+4`  | Year view                  |
+| `Ctrl+5`  | Agenda view                |
+| `Ctrl+6`  | Annual Recurring view      |
 | `Ctrl+T`  | Jump to today              |
 | `Ctrl+F`  | Find (focus search)        |
 | `Ctrl+,`  | Settings                   |

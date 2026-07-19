@@ -5,6 +5,40 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-19
+
+### Added
+
+- **Day and Week views.** In addition to Month, Year, Agenda and Annual
+  Recurring, the toolbar now offers a **Day** view (a single date's events in a
+  vertical detail list) and a **Week** view (a Sun–Sat grid for the week
+  containing the anchor date). The existing `‹` / `›` arrows step by **one day**
+  in Day view and **seven days** in Week view (with correct month/year rollover),
+  and **Today** re-anchors to the current date in whichever view is active. The
+  anchor date reuses the existing selected-date state, defaulting to today when
+  none is set. Clicking a day in Week view selects it into the side day-panel,
+  exactly like Month/Year view. The month/year dropdowns are hidden for Day/Week
+  (the anchor date, not a month+year pair, is the navigation unit), consistent
+  with Agenda/Annual Recurring. Native menu accelerators were renumbered to keep
+  a natural granularity progression: Day `Ctrl+1`, Week `Ctrl+2`, Month `Ctrl+3`,
+  Year `Ctrl+4`, Agenda `Ctrl+5`, Annual Recurring `Ctrl+6`.
+
+### Fixed
+
+- **Annual-recurring detection false positives from recurring meetings.** A
+  recurring meeting exported as one row per occurrence (weekly team sync,
+  recurring 1:1, etc.) could land on the same month+day in two different years
+  purely by chance, causing it to be misdetected as an annual event. Detection
+  now runs a second pass: for each subject it counts the distinct month/day
+  combinations it appears on across the whole archive (fuzzy variants merged when
+  fuzzy matching is enabled), and a subject scattered across two or more distinct
+  dates is excluded entirely — every cluster for it is dropped. The distinct-date
+  count is computed only from non-`RRULE:FREQ=YEARLY` instances, so a genuinely
+  yearly RRULE item is still trusted, while a single stray RRULE instance can no
+  longer whitewash an otherwise-clearly-recurring meeting. Genuine once-a-year
+  items (birthdays, anniversaries) are unaffected — they only ever occur on one
+  date, so they pass the new filter trivially.
+
 ## [1.1.0] - 2026-07-19
 
 ### Added

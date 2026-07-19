@@ -259,6 +259,29 @@ input[readonly] {
   color: var(--muted);
 }
 
+/* ---------- week view ---------- */
+
+.week-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  grid-auto-rows: minmax(240px, 1fr);
+}
+
+/* ---------- day view ---------- */
+
+.day-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 720px;
+}
+
 /* ---------- year view ---------- */
 
 .year-view {
