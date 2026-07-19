@@ -1,0 +1,61 @@
+import { parseIcs } from '../src/shared/import/ics';
+
+const SAMPLE = [
+  'BEGIN:VCALENDAR',
+  'VERSION:2.0',
+  'BEGIN:VEVENT',
+  'SUMMARY:Team Meeting',
+  'DTSTART:20200305T090000Z',
+  'DTEND:20200305T100000Z',
+  'LOCATION:Room 1',
+  'DESCRIPTION:Quarterly sync\\, all hands',
+  'CATEGORIES:Work',
+  'END:VEVENT',
+  'BEGIN:VEVENT',
+  'SUMMARY:Birthday',
+  'DTSTART;VALUE=DATE:20200410',
+  'RRULE:FREQ=YEARLY',
+  'END:VEVENT',
+  'END:VCALENDAR'
+].join('\r\n');
+
+describe('parseIcs', () => {
+  it('parses timed events with location, description and category', () => {
+    const { events } = parseIcs(SAMPLE);
+    expect(events).toHaveLength(2);
+    const timed = events[0];
+    expect(timed).toMatchObject({
+      subject: 'Team Meeting',
+      start_date: '2020-03-05',
+      start_time: '09:00',
+      end_time: '10:00',
+      location: 'Room 1',
+      category: 'Work'
+    });
+    expect(timed.description).toBe('Quarterly sync, all hands');
+  });
+
+  it('flags date-only events as all-day and preserves RRULE', () => {
+    const { events } = parseIcs(SAMPLE);
+    const allDay = events[1];
+    expect(allDay).toMatchObject({
+      subject: 'Birthday',
+      start_date: '2020-04-10',
+      all_day: 1,
+      rrule: 'FREQ=YEARLY'
+    });
+    expect(allDay.start_time).toBeUndefined();
+  });
+
+  it('unfolds folded continuation lines', () => {
+    const folded = [
+      'BEGIN:VEVENT',
+      'SUMMARY:A very long ',
+      ' event title',
+      'DTSTART:20200101',
+      'END:VEVENT'
+    ].join('\r\n');
+    const { events } = parseIcs(folded);
+    expect(events[0].subject).toBe('A very long event title');
+  });
+});

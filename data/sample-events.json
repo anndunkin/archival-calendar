@@ -1,0 +1,126 @@
+[
+  {
+    "subject": "Mom's Birthday",
+    "start_date": "2019-03-15",
+    "all_day": true,
+    "category": "Birthday",
+    "description": "Annual family celebration."
+  },
+  {
+    "subject": "Mom's Birthday",
+    "start_date": "2020-03-15",
+    "all_day": true,
+    "category": "Birthday"
+  },
+  {
+    "subject": "Mom's Birthday",
+    "start_date": "2021-03-15",
+    "all_day": true,
+    "category": "Birthday"
+  },
+  {
+    "subject": "Wedding Anniversary",
+    "start_date": "2018-06-22",
+    "all_day": true,
+    "category": "Anniversary",
+    "description": "Dinner at the lake house."
+  },
+  {
+    "subject": "Wedding Anniversary",
+    "start_date": "2019-06-22",
+    "all_day": true,
+    "category": "Anniversary"
+  },
+  {
+    "subject": "Wedding Anniversary",
+    "start_date": "2020-06-22",
+    "all_day": true,
+    "category": "Anniversary"
+  },
+  {
+    "subject": "Dad's Birthday",
+    "start_date": "2019-11-04",
+    "all_day": true,
+    "category": "Birthday",
+    "rrule": "FREQ=YEARLY"
+  },
+  {
+    "subject": "Dad's Birthday",
+    "start_date": "2020-11-04",
+    "all_day": true,
+    "category": "Birthday"
+  },
+  {
+    "subject": "Team Offsite Kickoff",
+    "start_date": "2020-01-13",
+    "start_time": "09:00",
+    "end_time": "17:00",
+    "location": "Denver Office",
+    "description": "Annual planning retreat.",
+    "category": "Work"
+  },
+  {
+    "subject": "Dentist Appointment",
+    "start_date": "2020-02-27",
+    "start_time": "14:30",
+    "end_time": "15:15",
+    "location": "Bright Smiles Dental",
+    "category": "Health"
+  },
+  {
+    "subject": "Project Deadline: Q1 Report",
+    "start_date": "2020-03-31",
+    "all_day": true,
+    "category": "Work"
+  },
+  {
+    "subject": "Spring Concert",
+    "start_date": "2020-04-18",
+    "start_time": "19:30",
+    "location": "City Auditorium",
+    "category": "Personal"
+  },
+  {
+    "subject": "Summer Road Trip",
+    "start_date": "2020-07-10",
+    "end_date": "2020-07-18",
+    "all_day": true,
+    "location": "Pacific Coast Highway",
+    "category": "Travel"
+  },
+  {
+    "subject": "Flight to Chicago",
+    "start_date": "2020-09-08",
+    "start_time": "06:45",
+    "location": "Gate B12",
+    "category": "Travel"
+  },
+  {
+    "subject": "Quarterly Review Meeting",
+    "start_date": "2020-10-15",
+    "start_time": "11:00",
+    "end_time": "12:00",
+    "location": "Conference Room A",
+    "category": "Work"
+  },
+  {
+    "subject": "Thanksgiving Dinner",
+    "start_date": "2020-11-26",
+    "all_day": true,
+    "location": "Grandma's House",
+    "category": "Holiday"
+  },
+  {
+    "subject": "Winter Break Begins",
+    "start_date": "2020-12-19",
+    "all_day": true,
+    "category": "Personal"
+  },
+  {
+    "subject": "New Year's Eve Party",
+    "start_date": "2020-12-31",
+    "start_time": "21:00",
+    "location": "Downtown Loft",
+    "category": "Holiday"
+  }
+]

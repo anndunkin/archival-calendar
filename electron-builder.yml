@@ -1,0 +1,34 @@
+appId: com.anndunkin.archivalcalendar
+productName: Archival Calendar
+copyright: Copyright © 2026 anndunkin
+
+directories:
+  output: release
+  buildResources: assets
+
+files:
+  - dist/**/*
+  - package.json
+  - data/sample-events.json
+
+extraResources:
+  - from: data
+    to: data
+    filter:
+      - "**/*"
+
+win:
+  target:
+    - nsis
+    - zip
+  icon: assets/icon.ico
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Archival Calendar
+
+publish: null
