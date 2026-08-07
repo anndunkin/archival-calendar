@@ -1,7 +1,7 @@
 {
   "name": "archival-calendar",
   "version": "1.2.0",
-  "description": "Archival Calendar desktop application — Electron + React + SQLite read-only viewer for historic calendar data with CSV/ICS import and annual-recurring-event detection",
+  "description": "Archival Calendar desktop application \u2014 Electron + React + SQLite read-only viewer for historic calendar data with CSV/ICS import and annual-recurring-event detection",
   "author": "anndunkin",
   "license": "MIT",
   "main": "dist/main/index.js",
@@ -44,5 +44,9 @@
     "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.1.0"
+  },
+  "overrides": {
+    "keyv": "4.5.4",
+    "cacheable-request": "7.0.4"
   }
 }
