@@ -115,6 +115,25 @@ npm run typecheck    # TypeScript type-check (no emit)
 npm run dist         # build and package Windows installers
 ```
 
+## Dependency modernization (v1.2.1)
+
+The application now runs on Electron 43.4.0, electron-builder 26.15.3, React
+19.2.8, Jest 30.4.x, webpack 5.109.2, and current testing, loader, and type
+packages. The React update includes the React 19 type migration described in
+the [official React 19 upgrade guide](https://react.dev/blog/2024/04/25/react-19-upgrade-guide).
+
+`electron-store` is now 11.0.2 and is ESM-only. Accordingly, the application
+package uses ESM, while build and Jest configurations retain explicit `.cjs`
+extensions; the Electron main process and preload bundle emit as `.mjs`. This
+matches [Electron's ESM documentation](https://www.electronjs.org/docs/latest/tutorial/esm).
+
+`better-sqlite3` is deliberately held to the current 12.x line (12.11.1):
+13.x segfaults in the Node 20 sandbox used for validation. TypeScript is on
+the current compatible 6.x line because `ts-jest` 29.4.12 does not yet declare
+support for TypeScript 7. The dependency update was validated with the complete
+Jest suite, typecheck, production webpack builds, the renderer development
+server, and an Electron startup smoke test.
+
 ## Project structure
 
 ```
@@ -179,4 +198,3 @@ the August 2026 Keyv/Cacheable npm supply chain attack, which compromised
 These are transitive dependencies pulled in via `got` → `@electron/get` → `electron`.
 **Before removing or updating these overrides**, verify that newer versions of
 `keyv`/`cacheable-request` are confirmed clean against current npm security advisories.
-

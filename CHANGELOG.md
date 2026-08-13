@@ -5,6 +5,31 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-08-13
+
+### Changed
+
+- **Full dependency modernization.** Updated Electron from 31.4.0 to 43.4.0,
+  electron-builder to 26.15.3, React/React DOM to 19.2.8, Jest to 30.4.2, the
+  Webpack toolchain, Papa Parse, testing libraries, and their related type
+  packages. React 19 type updates replace the removed global `JSX` namespace
+  with `React.JSX`.
+- **ESM main process.** Updated `electron-store` from 8.2.0 to 11.0.2. Because
+  modern electron-store is ESM-only, the app now uses an ESM package boundary,
+  emits `.mjs` main/preload bundles, and retains `.cjs` tooling configuration
+  files. This follows Electron's ESM guidance:
+  https://www.electronjs.org/docs/latest/tutorial/esm
+- **Compatible native and TypeScript lines.** `better-sqlite3` is updated to
+  12.11.1, the newest safe 12.x release; version 13.x is intentionally avoided
+  because it segfaults in the validation sandbox. TypeScript is updated to
+  6.0.3, the latest version compatible with `ts-jest` 29.4.12; TypeScript 7 is
+  outside that package's declared peer range.
+
+### Security
+
+- Preserved the mandatory `keyv@4.5.4` and `cacheable-request@7.0.4` overrides
+  after regenerating the lockfile.
+
 ## [1.2.0] - 2026-07-19
 
 ### Added
