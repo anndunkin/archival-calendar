@@ -11,6 +11,28 @@ import { IPC, SeedProgress } from '../shared/ipc';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Diagnostic safety net: make main-process startup failures impossible to
+// miss. Also writes to a log file next to the app in case the process exits
+// before any dialog can paint (e.g. a very early synchronous crash).
+function logStartupError(label: string, err: unknown): void {
+  const message = err instanceof Error ? `${err.message}\n${err.stack ?? ''}` : String(err);
+  try {
+    const logPath = path.join(app.getPath('userData'), 'startup-error.log');
+    fs.mkdirSync(path.dirname(logPath), { recursive: true });
+    fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${label}\n${message}\n\n`);
+  } catch {
+    // best-effort only
+  }
+  try {
+    dialog.showErrorBox(label, message);
+  } catch {
+    // best-effort only
+  }
+}
+
+process.on('uncaughtException', (err) => logStartupError('Uncaught exception in main process', err));
+process.on('unhandledRejection', (reason) => logStartupError('Unhandled rejection in main process', reason));
+
 let mainWindow: BrowserWindow | null = null;
 
 /**

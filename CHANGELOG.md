@@ -5,6 +5,28 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-08-13
+
+### Added
+
+- **On-screen diagnostic error reporting.** The 1.2.2 fix (splitting the
+  preload build back to CommonJS) was verified correct in the shipped
+  binary via asar decompilation, and `node_modules` (including the native
+  `better-sqlite3` binary and `electron-store`) were confirmed present in
+  the packaged app — but the blank-window symptom was reported unchanged
+  after a clean uninstall/reinstall. Since Electron cannot be run headless
+  in the environment used to build this app, further static analysis
+  cannot pin down the exact runtime failure without a real report from a
+  live Windows install. This release adds two safety nets so the *next*
+  report contains the actual error instead of a silent blank window:
+  - The renderer (`src/renderer/index.tsx`) now catches synchronous mount
+    errors, `window.onerror`, and unhandled promise rejections, and paints
+    the error message and stack trace directly into the page.
+  - The main process (`src/main/index.ts`) now catches `uncaughtException`
+    and `unhandledRejection`, shows a native error dialog, and appends the
+    error to `<userData>/startup-error.log` in case the process exits
+    before any dialog can paint.
+
 ## [1.2.2] - 2026-08-13
 
 ### Fixed
