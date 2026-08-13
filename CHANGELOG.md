@@ -5,6 +5,41 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.4] - 2026-08-13
+
+### Fixed
+
+- **Root cause of the blank-window bug found and fixed.** The 1.2.3
+  diagnostic build (on-screen error overlay + main-process crash logging)
+  caught nothing, because the real failure never throws a catchable JS
+  exception in the first place. DevTools console output from a live
+  install showed the actual error:
+  ```
+  Unable to load preload script: D:\a\archival-calendar\archival-calendar\src\main\preload.js
+  Error: ENOENT: no such file or directory, open 'D:\a\archival-calendar\archival-calendar\src\main\preload.js'
+  ```
+  `D:\a\<repo>\<repo>\...` is the GitHub Actions Windows runner's checkout
+  path. `src/main/index.ts` computes `__dirname` via
+  `fileURLToPath(import.meta.url)` (the standard ESM replacement, since
+  `__dirname` doesn't exist natively in ES modules) to build the preload
+  script's absolute path. By default, webpack statically replaces
+  `import.meta.url` with a hardcoded `file://` URL pointing at the build
+  machine's source file location — so every installed copy of the app,
+  on every user's machine, was looking for its preload script inside the
+  CI runner's now-nonexistent build directory instead of its own install
+  directory. Electron logs this preload load failure to the DevTools
+  console rather than raising a catchable exception, which is why the
+  three prior fix attempts (including 1.2.3's exception/rejection
+  handlers) never surfaced anything.
+  - `webpack.main.config.cjs`: added `module.parser.javascript.importMeta:
+    false` to the main-process config, which disables webpack's built-time
+    substitution and leaves `import.meta.url` to resolve at real runtime
+    against the file's actual location, matching Node/Electron's native
+    ESM behavior.
+  - Verified in the rebuilt `dist/main/index.mjs`: zero occurrences of the
+    hardcoded CI path remain, `import.meta.url` is preserved as live code,
+    and it's used correctly via `createRequire(import.meta.url)`.
+
 ## [1.2.3] - 2026-08-13
 
 ### Added

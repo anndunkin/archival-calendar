@@ -39,7 +39,28 @@ const mainConfig = {
     outputModule: true
   },
   externalsType: 'module',
-  module: { rules: [tsRule] },
+  module: {
+    rules: [tsRule],
+    // By default webpack statically replaces `import.meta.url` with a
+    // hardcoded file:// URL pointing at the *build machine's* source path
+    // (e.g. the CI runner's D:\a\<repo>\<repo>\... checkout directory).
+    // src/main/index.ts uses `fileURLToPath(import.meta.url)` specifically
+    // to compute __dirname at RUNTIME (there is no native __dirname in
+    // ESM). If webpack bakes in the build-time value instead, the preload
+    // script path resolves to a path that only exists on the CI runner,
+    // producing "Unable to load preload script: ENOENT" on every real
+    // install with a permanently blank window and no catchable JS
+    // exception (Electron logs this preload failure to the console
+    // itself, it isn't a throw our uncaughtException/onerror handlers
+    // ever see). Disabling this parser option forces webpack to leave
+    // `import.meta.url` untouched so Node/Electron resolves it against
+    // the actual running file's real location at runtime.
+    parser: {
+      javascript: {
+        importMeta: false
+      }
+    }
+  },
   resolve,
   externals: ['better-sqlite3', 'electron-store'],
   node
