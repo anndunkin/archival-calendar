@@ -15,7 +15,7 @@ const CATEGORIES: RecurringCategory[] = ['Birthday', 'Anniversary', 'Other'];
  * button writes all items to a single CSV or ICS file — the deliverable of this
  * feature (the app itself never sends reminders).
  */
-export function RecurringEvents({ items, onExport }: RecurringEventsProps): JSX.Element {
+export function RecurringEvents({ items, onExport }: RecurringEventsProps): React.JSX.Element {
   const [overrides, setOverrides] = useState<Record<string, RecurringCategory>>({});
 
   return (

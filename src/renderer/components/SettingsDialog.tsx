@@ -16,7 +16,7 @@ export function SettingsDialog({
   onSave,
   onCancel,
   onChooseDatabase
-}: SettingsDialogProps): JSX.Element {
+}: SettingsDialogProps): React.JSX.Element {
   const [theme, setTheme] = useState(settings.theme);
   const [fuzzyRecurring, setFuzzyRecurring] = useState(settings.fuzzyRecurring);
 

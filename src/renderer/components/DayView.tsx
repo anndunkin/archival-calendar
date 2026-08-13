@@ -8,7 +8,7 @@ interface DayViewProps {
 }
 
 /** Vertical agenda-style list of a single day's events (read-only). */
-export function DayView({ date, events }: DayViewProps): JSX.Element {
+export function DayView({ date, events }: DayViewProps): React.JSX.Element {
   const dayEvents = useMemo(
     () => events.filter((e) => e.start_date === date),
     [events, date]

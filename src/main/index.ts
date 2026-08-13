@@ -1,12 +1,15 @@
 import { app, BrowserWindow, dialog } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import { fileURLToPath } from 'url';
 import { EventDatabase } from './database';
 import { buildMenu, setWindowTitle } from './menu';
 import { getSettings, setDatabasePath } from './settings';
 import { registerIpcHandlers, getCurrentDb } from './ipc-handlers';
 import { loadSeedEvents } from './seed';
 import { IPC, SeedProgress } from '../shared/ipc';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -111,7 +114,7 @@ function createWindow(): void {
     minHeight: 620,
     title: 'Archival Calendar',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true

@@ -10,7 +10,7 @@ interface YearViewProps {
 }
 
 /** 12 mini-months for scanning a whole year of the archive at once. */
-export function YearView({ year, events, onSelectMonth, onSelectDate }: YearViewProps): JSX.Element {
+export function YearView({ year, events, onSelectMonth, onSelectDate }: YearViewProps): React.JSX.Element {
   const datesWithEvents = useMemo(() => {
     const set = new Set<string>();
     for (const e of events) if (e.start_date) set.add(e.start_date);

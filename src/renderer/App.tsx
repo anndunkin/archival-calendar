@@ -35,7 +35,7 @@ type ViewMode = 'month' | 'year' | 'agenda' | 'recurring' | 'day' | 'week';
 
 const YEARS_BACK = 60;
 
-export function App(): JSX.Element {
+export function App(): React.JSX.Element {
   const now = new Date();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [recurring, setRecurring] = useState<RecurringItem[]>([]);

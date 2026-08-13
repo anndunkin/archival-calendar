@@ -15,7 +15,7 @@ export function WeekView({
   events,
   selectedDate,
   onSelectDate
-}: WeekViewProps): JSX.Element {
+}: WeekViewProps): React.JSX.Element {
   const byDate = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>();
     for (const e of events) {

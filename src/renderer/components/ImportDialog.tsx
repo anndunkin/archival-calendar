@@ -10,7 +10,7 @@ interface ImportDialogProps {
   onDone: (summary: ImportSummary) => void;
 }
 
-export function ImportDialog({ picked, events, onCancel, onDone }: ImportDialogProps): JSX.Element {
+export function ImportDialog({ picked, events, onCancel, onDone }: ImportDialogProps): React.JSX.Element {
   const [strategy, setStrategy] = useState<DuplicateStrategy>('skip');
   const [busy, setBusy] = useState(false);
   const [summary, setSummary] = useState<ImportSummary | null>(null);

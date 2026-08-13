@@ -3,11 +3,11 @@ import React from 'react';
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
-  inputRef?: React.RefObject<HTMLInputElement>;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
   placeholder?: string;
 }
 
-export function SearchBar({ value, onChange, inputRef, placeholder }: SearchBarProps): JSX.Element {
+export function SearchBar({ value, onChange, inputRef, placeholder }: SearchBarProps): React.JSX.Element {
   return (
     <input
       ref={inputRef}

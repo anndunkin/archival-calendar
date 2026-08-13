@@ -8,8 +8,13 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist/main'),
-    filename: '[name].js'
+    filename: '[name].mjs',
+    module: true
   },
+  experiments: {
+    outputModule: true
+  },
+  externalsType: 'module',
   module: {
     rules: [
       {
@@ -22,10 +27,7 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js', '.json']
   },
-  externals: {
-    'better-sqlite3': 'commonjs better-sqlite3',
-    'electron-store': 'commonjs electron-store'
-  },
+  externals: ['better-sqlite3', 'electron-store'],
   node: {
     __dirname: false,
     __filename: false

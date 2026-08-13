@@ -16,7 +16,7 @@ export function MonthView({
   events,
   selectedDate,
   onSelectDate
-}: MonthViewProps): JSX.Element {
+}: MonthViewProps): React.JSX.Element {
   const byDate = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>();
     for (const e of events) {
