@@ -9,7 +9,7 @@ interface AgendaViewProps {
 }
 
 /** Chronological list of events — the best view for search results. */
-export function AgendaView({ events, selectedId, onSelect }: AgendaViewProps): JSX.Element {
+export function AgendaView({ events, selectedId, onSelect }: AgendaViewProps): React.JSX.Element {
   if (events.length === 0) {
     return <p className="empty">No events match.</p>;
   }

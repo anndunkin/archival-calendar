@@ -7,7 +7,7 @@ interface ModalProps {
   footer?: React.ReactNode;
 }
 
-export function Modal({ title, onClose, children, footer }: ModalProps): JSX.Element {
+export function Modal({ title, onClose, children, footer }: ModalProps): React.JSX.Element {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" role="dialog" aria-label={title} onClick={(e) => e.stopPropagation()}>

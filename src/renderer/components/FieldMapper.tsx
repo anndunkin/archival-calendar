@@ -14,7 +14,7 @@ export function FieldMapper({
   initialMapping,
   onConfirm,
   onCancel
-}: FieldMapperProps): JSX.Element {
+}: FieldMapperProps): React.JSX.Element {
   const base: FieldMapping = {};
   for (const h of headers) base[h] = '';
   const [mapping, setMapping] = useState<FieldMapping>({ ...base, ...initialMapping });

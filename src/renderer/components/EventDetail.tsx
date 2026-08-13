@@ -13,7 +13,7 @@ function timeRange(e: CalendarEvent): string {
 }
 
 /** Read-only detail card for a single archived event. */
-export function EventDetail({ event }: EventDetailProps): JSX.Element {
+export function EventDetail({ event }: EventDetailProps): React.JSX.Element {
   return (
     <div className="event-detail">
       <div className="event-detail-head">

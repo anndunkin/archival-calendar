@@ -9,7 +9,7 @@ interface DayPanelProps {
 }
 
 /** Side panel showing all events on the selected day (read-only). */
-export function DayPanel({ date, events }: DayPanelProps): JSX.Element {
+export function DayPanel({ date, events }: DayPanelProps): React.JSX.Element {
   if (!date) {
     return (
       <aside className="day-panel">
