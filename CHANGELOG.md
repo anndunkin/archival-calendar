@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-08-13
+
+### Fixed
+
+- **Blank window with a dead menu on every launch, introduced in 1.2.1.**
+  The 1.2.1 dependency modernization moved to an ESM main process and, in
+  the process, also built the *preload* script as an ES module (`preload.mjs`).
+  Electron's sandboxed preload (`sandbox: true`) cannot load an ES module
+  preload script, so it silently failed to load, `contextBridge` never ran,
+  and `window.archivalCalendar` stayed undefined — the React renderer threw
+  on mount and the window rendered blank with an unresponsive native menu.
+  The main process entry point (`index.mjs`) legitimately stays ESM; the
+  preload script now builds separately as CommonJS (`preload.js`), which
+  Electron's sandboxed preload loader supports. Added regression tests
+  (`tests/security-electron-hardening.test.ts`) asserting the preload path
+  stays `.js` and the webpack preload config never sets `module: true`.
+
 ## [1.2.1] - 2026-08-13
 
 ### Changed

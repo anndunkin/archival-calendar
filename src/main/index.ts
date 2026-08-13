@@ -114,7 +114,9 @@ function createWindow(): void {
     minHeight: 620,
     title: 'Archival Calendar',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.mjs'),
+      // preload must stay CommonJS (.js) — Electron's sandboxed preload
+      // (sandbox: true below) cannot load an ES module preload script.
+      preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true
